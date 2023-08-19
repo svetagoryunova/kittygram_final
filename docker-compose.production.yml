@@ -11,23 +11,32 @@ services:
     env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
+
   backend:
     image: sveta9/kittygram_backend
     env_file: .env
     volumes:
       - static:/backend_static
       - media:/app/media
+    depends_on:
+      - db
+
   frontend:
     image: sveta9/kittygram_frontend
     env_file: .env
     command: cp -r /app/build/. /static/
     volumes:
       - static:/static
+    depends_on:
+      - backend
+
   gateway:
     image: sveta9/kittygram_gateway
     env_file: .env
     volumes:
       - static:/static/
       - media:/media
+    depends_on:
+      - frontend
     ports:
       - 9000:80
